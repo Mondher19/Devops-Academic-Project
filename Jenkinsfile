@@ -33,19 +33,7 @@ pipeline {
             }
         }
 
-        stage('Build Backend') {
-            steps {
-                dir('DevOps_Backend') {
-                    script {
-                        sh "${MVN_HOME}/bin/mvn clean package"
-                    }
-                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-                }
-            }
-        }
-
-        Ahmed Kazez
-stage('JaCoCo Results') {
+        stage('JaCoCo Results') {
             steps {
                 script {
                     def jacocoReportPath = 'Back/target/site/jacoco'
@@ -63,6 +51,18 @@ stage('JaCoCo Results') {
                 }
             }
         }
+
+        stage('Build Backend') {
+            steps {
+                dir('DevOps_Backend') {
+                    script {
+                        sh "${MVN_HOME}/bin/mvn clean package"
+                    }
+                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                }
+            }
+        }
+
 
    
 
