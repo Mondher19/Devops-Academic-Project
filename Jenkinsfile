@@ -36,7 +36,7 @@ pipeline {
         stage('JaCoCo Results') {
             steps {
                 script {
-                    def jacocoReportPath = 'Back/target/site/jacoco'
+                    def jacocoReportPath = 'DevOps_Backend/target/site/jacoco'
 
                     publishHTML(
                         target: [
