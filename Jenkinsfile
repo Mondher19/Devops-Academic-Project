@@ -44,23 +44,27 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-    steps {
-        script {
-            // Checkout the source code from GitHub
-            checkout scm
-            
-            def scannerHome = tool 'SonarQubeScanner'
-            withSonarQubeEnv('SonarQube') {
-                sh """
-                    ${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=Mondher_Devops \
-                    -Dsonar.java.binaries=DevOps_Backend/target/classes
-                """
+        Ahmed Kazez
+stage('JaCoCo Results') {
+            steps {
+                script {
+                    def jacocoReportPath = 'Back/target/site/jacoco'
+
+                    publishHTML(
+                        target: [
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: true,
+                            keepAll: true,
+                            reportDir: jacocoReportPath,
+                            reportFiles: 'index.html',
+                            reportName: 'JaCoCo Code Report'
+                        ]
+                    )
+                }
             }
         }
-    }
-}
+
+   
 
 
 
