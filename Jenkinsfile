@@ -61,6 +61,19 @@ pipeline {
                     archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
                 }
             }
+
+             post {
+        success {
+            mail to: 'mondher.benhajammar@epsrit.tn',
+                 subject: "Build Backend",
+                 body: "Build Backend succeeded."
+        }
+        failure {
+            mail to: 'mondher.benhajammar@epsrit.tn',
+                 subject: "Build Backend",
+                 body: "Build Backend failed."
+        }
+    }
         }
 
 
