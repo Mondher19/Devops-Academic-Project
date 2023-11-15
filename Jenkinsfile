@@ -82,7 +82,7 @@ pipeline {
         stage('SonarQube Analysis'){
             
             steps{
-                dir('Back') {
+                dir('DevOps_Backend') {
 
                     
                         sh 'mvn sonar:sonar -Dsonar.token=sqp_894e251d186fd90deca5907697df33efdc9e03ce Dsonar.login=admin -Dsonar.password=Mondher1234 -T 4'
