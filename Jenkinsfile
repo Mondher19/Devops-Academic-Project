@@ -75,23 +75,111 @@ pipeline {
         }
     }
         } 
+
+         stage('Build Frontend') {
+            steps {
+                dir('DevOps_Front') {
+                    echo 'Installing dependencies...'
+                    sh 'npm install'
+                    echo 'Building Angular project...'
+                    sh 'ng build'
+                }
+            }
+            post {
+                success {
+                    echo 'Frontend build successful.'
+                }
+                failure {
+                    echo 'Frontend build failed.'
+                }
+            }
+        }
+
+      
         
 
-
-
-        stage('SonarQube Analysis'){
-            
-            steps{
-                dir('DevOps_Backend') {
-
-                    
-                        sh 'mvn sonar:sonar -Dsonar.token=sqp_894e251d186fd90deca5907697df33efdc9e03ce Dsonar.login=admin -Dsonar.password=Mondher1234 -T 4'
-
+  stage('Deploy to Nexus') {
+            steps {
+                script {
+                    def artifactFile = "DevOps_Backend/target/DevOps_Project-1.0.jar" // Replace with the actual artifact name pattern
+                    nexusArtifactUploader(
+                        nexusVersion: 'nexus3',
+                        protocol: 'http',
+                        nexusUrl: "${NEXUS_IP}:${NEXUS_PORT}",
+                        groupId: 'QA',
+                        version: "${env.BUILD_ID}-${new Date().format('yyyyMMddHHmmss')}", // Correct timestamp format
+                        repository: "${RELEASE_REPO}",
+                        credentialsId: "${NEXUS_LOGIN}",
+                        artifacts: [
+                            [artifactId: 'DevOps_Project',
+                             classifier: '',
+                             file: artifactFile,
+                             type: 'jar']
+                        ]
+                    )
                 }
+            }
         }
+
+stage('SonarQube Analysis') {
+    steps {
+        script {
+            // Checkout the source code from GitHub
+            checkout scm
+            
+            def scannerHome = tool 'SonarQubeScanner'
+            withSonarQubeEnv('SonarQube') {
+                sh """
+                    ${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=Mondher_Devops \
+                    -Dsonar.java.binaries=DevOps_Backend/target/classes \
+                    -Dsonar.coverage.jacoco.xmlReportPaths=DevOps_Backend/target/site/jacoco/jacoco.xml
+                """
+            }
         }
+    }
+}
    
 
+
+        stage('Build Docker Images') {
+         steps {
+            script {
+             // Build and push backend image
+             dir('DevOps_Backend') {
+                 docker.build("mondherbha1999/devopsproject", "-f /var/lib/jenkins/workspace/Devops_project/DevOps_Backend/Dockerfile .")
+             }
+
+            // // Build and push frontend image
+             // dir('DevOps_Front') {
+                //     docker.build("hamzabouzidi/devopsfrontend", "-f /var/lib/jenkins/workspace/projetDevOps/DevOps_Front/Dockerfile .")
+             // }
+        }
+     }
+ }
+
+
+         stage('Push image to Hub') {
+    steps {
+        script {
+            withCredentials([string(credentialsId: 'docker-hub-credentials-id', variable: 'DOCKER_HUB_PASSWORD')]) {
+                dir('DevOps_Backend') {
+                    sh "docker login -u mondherbha1999 -p ${DOCKER_HUB_PASSWORD}"
+                    sh "docker push mondherbha1999/devops_project"
+                }
+            }
+        }
+    }
+}
+
+
+        stage('Build and Deploy') {
+            steps {
+                script {
+                    sh '/usr/bin/docker-compose -f /var/lib/jenkins/workspace/projetDevOps/docker-compose.yml up -d'
+                }
+            }
+}
 
 
         
