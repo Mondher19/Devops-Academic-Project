@@ -23,6 +23,29 @@ pipeline {
             }
         }
 
+       stage('Build Backend') {
+            steps {
+                dir('DevOps_Backend') {
+                    script {
+                        sh "${MVN_HOME}/bin/mvn clean package"
+                    }
+                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                }
+            }
+
+             post {
+        success {
+            mail to: 'mondher.benhajammar@esprit.tn',
+                 subject: "Build Backend",
+                 body: "Build Backend succeeded."
+        }
+        failure {
+            mail to: 'mondher.benhajammar@esprit.tn',
+                 subject: "Build Backend",
+                 body: "Build Backend failed."
+        }
+    }
+        } 
         
 
 
