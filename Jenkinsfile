@@ -85,7 +85,7 @@ pipeline {
                 dir('Back') {
 
                     
-                        sh 'mvn sonar:sonar -Dsonar.token=squ_d53d2330ec212357ecf0ac1ec3bd872d2b4db15a -Dsonar.login=admin -Dsonar.password=Mondher1234 -T 4'
+                        sh 'mvn sonar:sonar -Dsonar.token=sqp_894e251d186fd90deca5907697df33efdc9e03ce Dsonar.login=admin -Dsonar.password=Mondher1234 -T 4'
 
                 }
         }
