@@ -49,7 +49,23 @@ pipeline {
     }
         }
 
-
+  stage('SonarQube Analysis') {
+    steps {
+        script {
+            // Checkout the source code from GitHub
+            checkout scm
+            
+            def scannerHome = tool 'SonarQubeScanner'
+            withSonarQubeEnv('SonarQube') {
+                sh """
+                    ${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=Mondher_Devops \
+                    -Dsonar.java.binaries=DevOps_Backend/target/classes
+                """
+            }
+        }
+    }
+}
    
 
 
