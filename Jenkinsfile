@@ -61,6 +61,7 @@ pipeline {
                     ${scannerHome}/bin/sonar-scanner \
                     -Dsonar.projectKey=Mondher_Devops \
                     -Dsonar.java.binaries=DevOps_Backend/target/classes
+                    -Dsonar.login=sqp_c931d1e1ae26c98d9f8c19b28e4854f1c64fbc33
                 """
             }
         }
