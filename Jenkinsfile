@@ -78,24 +78,18 @@ pipeline {
         
 
 
-  stage('SonarQube Analysis') {
-    steps {
-        script {
-            // Checkout the source code from GitHub
-            checkout scm
+
+        stage('SonarQube Analysis'){
             
-            def scannerHome = tool 'SonarQubeScanner'
-            withSonarQubeEnv('SonarQube') {
-                sh """
-                    ${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=Mondher_Devops \
-                    -Dsonar.java.binaries=DevOps_Backend/target/classes \
-                    -Dsonar.coverage.jacoco.xmlReportPaths=DevOps_Backend/target/site/jacoco/jacoco.xml
-                """
-            }
+            steps{
+                dir('Back') {
+
+                    
+                        sh 'mvn sonar:sonar -Dsonar.token=squ_d53d2330ec212357ecf0ac1ec3bd872d2b4db15a -Dsonar.login=admin -Dsonar.password=Mondher1234 -T 4'
+
+                }
         }
-    }
-}
+        }
    
 
 
