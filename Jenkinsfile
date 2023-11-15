@@ -23,6 +23,35 @@ pipeline {
             }
         }
 
+        stage('Unit Test') {
+            steps {
+                dir('DevOps_Backend') {
+                    script {
+                        sh "${MVN_HOME}/bin/mvn clean test"
+                    }
+                }
+            }
+        }
+
+        stage('JaCoCo Results') {
+            steps {
+                script {
+                    def jacocoReportPath = 'DevOps_Backend/target/site/jacoco'
+
+                    publishHTML(
+                        target: [
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: true,
+                            keepAll: true,
+                            reportDir: jacocoReportPath,
+                            reportFiles: 'index.html',
+                            reportName: 'JaCoCo Code Report'
+                        ]
+                    )
+                }
+            }
+        }  
+
        stage('Build Backend') {
             steps {
                 dir('DevOps_Backend') {
