@@ -89,7 +89,7 @@ pipeline {
                 sh """
                     ${scannerHome}/bin/sonar-scanner \
                     -Dsonar.projectKey=Mondher_Devops \
-                    -Dsonar.java.binaries=DevOps_Backend/target/classes
+                    -Dsonar.java.binaries=DevOps_Backend/target/classes \
                     -Dsonar.coverage.jacoco.xmlReportPaths=DevOps_Backend/target/site/jacoco/jacoco.xml
                 """
             }
