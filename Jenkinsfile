@@ -130,7 +130,7 @@ pipeline {
             script {
              // Build and push backend image
              dir('DevOps_Backend') {
-                 docker.build("mondherbha1999/devopsproject", "-f /var/lib/jenkins/workspace/devopsproject/DevOps_Backend/Dockerfile .")
+                 docker.build("mondherbha1999/devopsproject", "-f /var/lib/jenkins/workspace/projetDevOps/DevOps_Backend/Dockerfile .")
              }
 
             // // Build and push frontend image
