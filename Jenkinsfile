@@ -37,12 +37,12 @@ pipeline {
 
              post {
         success {
-            mail to: 'mondher.benhajammar@epsrit.tn',
+            mail to: 'mondher.benhajammar@esprit.tn',
                  subject: "Build Backend",
                  body: "Build Backend succeeded."
         }
         failure {
-            mail to: 'mondher.benhajammar@epsrit.tn',
+            mail to: 'mondher.benhajammar@esprit.tn',
                  subject: "Build Backend",
                  body: "Build Backend failed."
         }
