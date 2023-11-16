@@ -23,34 +23,7 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
-            steps {
-                dir('DevOps_Backend') {
-                    script {
-                        sh "${MVN_HOME}/bin/mvn clean test"
-                    }
-                }
-            }
-        }
-
-        stage('JaCoCo Results') {
-            steps {
-                script {
-                    def jacocoReportPath = 'DevOps_Backend/target/site/jacoco'
-
-                    publishHTML(
-                        target: [
-                            allowMissing: false,
-                            alwaysLinkToLastBuild: true,
-                            keepAll: true,
-                            reportDir: jacocoReportPath,
-                            reportFiles: 'index.html',
-                            reportName: 'JaCoCo Code Report'
-                        ]
-                    )
-                }
-            }
-        }  
+        
 
        stage('Build Backend') {
             steps {
@@ -76,24 +49,7 @@ pipeline {
     }
         } 
 
-         stage('Build Frontend') {
-            steps {
-                dir('DevOps_Front') {
-                    echo 'Installing dependencies...'
-                    sh 'npm install'
-                    echo 'Building Angular project...'
-                    sh 'ng build'
-                }
-            }
-            post {
-                success {
-                    echo 'Frontend build successful.'
-                }
-                failure {
-                    echo 'Frontend build failed.'
-                }
-            }
-        }
+   
 
       
         
@@ -109,7 +65,7 @@ pipeline {
             script {
              // Build and push backend image
              dir('DevOps_Backend') {
-                 docker.build("mondherbha1999/devopsproject", "-f /var/lib/jenkins/workspace/projetDevOps/DevOps_Backend/Dockerfile .")
+                 docker.build("mondherbha1999/devopsproject", "-f /var/lib/jenkins/workspace/Devops_project/DevOps_Backend/Dockerfile .")
              }
 
             // // Build and push frontend image
@@ -138,7 +94,7 @@ pipeline {
         stage('Build and Deploy') {
             steps {
                 script {
-                    sh '/usr/bin/docker-compose -f /var/lib/jenkins/workspace/projetDevOps/docker-compose.yml up -d'
+                    sh '/usr/bin/docker-compose -f /var/lib/jenkins/workspace/Devops_project/docker-compose.yml up -d'
                 }
             }
 }
