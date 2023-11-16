@@ -78,24 +78,24 @@ pipeline {
     }
         } 
 
-            stage('SonarQube Analysis') {
-    steps {
-        script {
-            // Checkout the source code from GitHub
-            checkout scm
-            
-            def scannerHome = tool 'SonarQubeScanner'
-            withSonarQubeEnv('SonarQube') {
-                sh """
-                    ${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=Mondher_Devops \
-                    -Dsonar.java.binaries=DevOps_Backend/target/classes \
-                    -Dsonar.coverage.jacoco.xmlReportPaths=DevOps_Backend/target/site/jacoco/jacoco.xml
-                """
+        stage('Build Frontend') {
+            steps {
+                dir('DevOps_Front') {
+                    echo 'Installing dependencies...'
+                    sh 'npm install'
+                    echo 'Building Angular project...'
+                    sh 'ng build'
+                }
+            }
+            post {
+                success {
+                    echo 'Frontend build successful.'
+                }
+                failure {
+                    echo 'Frontend build failed.'
+                }
             }
         }
-    }
-}
 
      stage('Deploy to Nexus') {
             steps {
