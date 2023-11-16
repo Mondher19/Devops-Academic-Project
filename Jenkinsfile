@@ -23,7 +23,36 @@ pipeline {
             }
         }
 
-        
+        stage('Unit Test') {
+            steps {
+                dir('DevOps_Backend') {
+                    script {
+                        sh "${MVN_HOME}/bin/mvn clean test"
+                    }
+                }
+            }
+        }
+
+        stage('JaCoCo Results') {
+            steps {
+                script {
+                    def jacocoReportPath = 'DevOps_Backend/target/site/jacoco'
+
+                    publishHTML(
+                        target: [
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: true,
+                            keepAll: true,
+                            reportDir: jacocoReportPath,
+                            reportFiles: 'index.html',
+                            reportName: 'JaCoCo Code Report'
+                        ]
+                    )
+                }
+            }
+        }  
+    
+
 
        stage('Build Backend') {
             steps {
@@ -49,8 +78,44 @@ pipeline {
     }
         } 
 
-   
+        stage('Build Frontend') {
+            steps {
+                dir('DevOps_Front') {
+                    echo 'Installing dependencies...'
+                    sh 'npm install'
+                    echo 'Building Angular project...'
+                    sh 'ng build'
+                }
+            }
+            post {
+                success {
+                    echo 'Frontend build successful.'
+                }
+                failure {
+                    echo 'Frontend build failed.'
+                }
+            }
+        }
 
+   
+    stage('SonarQube Analysis') {
+    steps {
+        script {
+            // Checkout the source code from GitHub
+            checkout scm
+            
+            def scannerHome = tool 'SonarQubeScanner'
+            withSonarQubeEnv('SonarQube') {
+                sh """
+                    ${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=Mondher_Devops \
+                    -Dsonar.java.binaries=DevOps_Backend/target/classes \
+                    -Dsonar.coverage.jacoco.xmlReportPaths=DevOps_Backend/target/site/jacoco/jacoco.xml
+                """
+            }
+        }
+    }
+}
       
         
 
